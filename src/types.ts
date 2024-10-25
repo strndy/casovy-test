@@ -23,3 +23,11 @@ export type StockEvent = {
     CurrencyTransactionFee: string;
     CurrencyFinraFee: string;
 }
+
+export type Holding = {
+    Ticker: string;
+    NoOfShares: number;
+    TestPassTime: number;
+    BuyDate: string;
+    BuyPrice: number;
+}

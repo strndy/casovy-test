@@ -1,0 +1,10 @@
+Action,Time,ISIN,Ticker,Name,No. of shares,Price / share,Currency (Price / share),Exchange rate,Result,Currency (Result),Total,Currency (Total),Withholding tax,Currency (Withholding tax),Stamp duty reserve tax,Currency (Stamp duty reserve tax),Transaction fee,Finra fee,Notes,ID,Currency (Transaction fee),Currency (Finra fee)
+Deposit,2019-12-05 9:36:08,,,,,,,,,,2000,CZK,,,,,,,Transaction ID: 1745755385679756,83a055dd-9c43-4e8d-a532-98d19ea1ef55,,
+Market buy,2019-12-05 9:42:00,TESTISINAA,AA,Teststck1,1,1232.5,GBX,3.30801,,CZK,374.44,CZK,,,1.86,CZK,,,,EOF127307064,,
+Market buy,2019-12-05 15:30:00,TESTISINBB,BB,Test Stock 2,2,149.91,USD,0.04342,,CZK,6904.25,CZK,,,,,,,,EOF127347450,,
+Deposit,2019-12-08 12:36:03,,,,,,,,,,370,CZK,,,,,,,Transaction ID: 1855758085629242,931c968d-aaee-4ac3-a4ef-3847aab1cd44,,
+Stop sell,2019-12-09 8:00:07,TESTISINAA,AA,Teststck1,1,1202,GBX,3.2917,-7.41,CZK,365.16,CZK,,,,,,,,EOF127497999,,
+Limit buy,2019-12-10 8:44:18,TESTISINAA,AA,Teststck1,1,45.3,GBP,0.03297,,CZK,1373.81,CZK,,,,,,,,EOF127596919,,
+Dividend (Ordinary),2019-12-31 13:42:06,TESTISINBB,BB,Test Stock 2,1,0.15,GBP,Not available,,,4.54,CZK,Not available,GBP,,,,,,,,
+Market buy,2020-01-13 8:00:06,TESTISINBB,BB,Test Stock 2,6,47.82,GBP,0.03385,,CZK,8474.46,CZK,,,,,,,,EOF130966990,,
+Market sell,2020-01-13 8:00:06,TESTISINBB,BB,Test Stock 2,6,47.82,GBP,0.03385,,CZK,8474.46,CZK,,,,,,,,EOF130966990,,

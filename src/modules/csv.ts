@@ -11,12 +11,19 @@ export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
         .pipe(parse({
             columns: (headers: string[]) => headers.map(toPascalCase),
             skip_empty_lines: true,
-            autoParse: true
+            autoParse: true,
+            cast: (value, context) => {
+                if (context.column === 'Time') {
+                    return new Date(value);
+                }
+                return value;
+            }
         }));
 
     for await (const record of parser) {
         records.push(record);
     }
 
+    
     return records;
 }

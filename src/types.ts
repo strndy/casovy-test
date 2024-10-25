@@ -1,6 +1,6 @@
 export type StockEvent = {
     Action: string;
-    Time: string;
+    Time: Date;
     ISIN: string;
     Ticker: string;
     Name: string;

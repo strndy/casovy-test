@@ -1,4 +1,4 @@
-export type StockEvent = {
+export type Event = {
     Action: string;
     Time: Date;
     ISIN: string;

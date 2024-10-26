@@ -1,3 +1,4 @@
+import { visualiseExpiration } from "../visualise/visualise";
 import { organizeStockPurchases } from "./parseStockEvents";
 import { mockStockEvents, mockStockEventsDuplicateID, mockStockEventsOutOfOrder } from "./parseStockEvents.mock";
 
@@ -10,6 +11,7 @@ describe('parseStockEvents', () => {
         expect(result).toMatchSnapshot();
         expect(result['AAPL'].length).toBe(4);
         expect(result['AAPL'].filter(s => !s.SellDate).length).toBe(2);
+        // visualise(result);
     });
 
     it('should throw error if events are out of order', async () => {

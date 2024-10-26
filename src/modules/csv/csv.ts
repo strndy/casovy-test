@@ -1,10 +1,10 @@
 import { parse } from 'csv-parse';
 import * as fs from 'fs';
-import { StockEvent } from "../../types";
+import { Event } from "../../types";
 import { toPascalCase } from "./toPascalCase";
 
 
-export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
+export const readCSV = async (filePath: string): Promise<Event[]> => {
     const records: any[] = [];
     const parser = fs
         .createReadStream(filePath)
@@ -14,7 +14,11 @@ export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
             autoParse: true,
             cast: (value, context) => {
                 if (context.column === 'Time') {
-                    return new Date(value);
+                    const date = new Date(value);
+                    if (date.toString() === 'Invalid Date') {
+                        throw new Error(`Invalid date: ${value}`);
+                    }
+                    return date;
                 }
                 if (context.column === 'NoOfShares') {
                     return parseInt(value);

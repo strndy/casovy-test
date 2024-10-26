@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parseStockEvents should have all the stocks and marked sold shares 1`] = `
+{
+  "AAPL": [
+    {
+      "BuyDate": 2023-01-01T10:00:00.000Z,
+      "BuyPrice": 150,
+      "SellDate": 2023-06-01T14:30:00.000Z,
+      "Ticker": "AAPL",
+    },
+    {
+      "BuyDate": 2023-01-01T10:00:00.000Z,
+      "BuyPrice": 150,
+      "SellDate": 2023-07-01T14:30:00.000Z,
+      "Ticker": "AAPL",
+    },
+    {
+      "BuyDate": 2023-01-01T10:00:00.000Z,
+      "BuyPrice": 150,
+      "Ticker": "AAPL",
+    },
+    {
+      "BuyDate": 2023-02-01T10:00:00.000Z,
+      "BuyPrice": 200,
+      "Ticker": "AAPL",
+    },
+  ],
+}
+`;

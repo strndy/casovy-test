@@ -4,8 +4,8 @@ export type StockEvent = {
     ISIN: string;
     Ticker: string;
     Name: string;
-    NoOfShares: string;
-    PriceShare: string;
+    NoOfShares: number;
+    PriceShare: number;
     CurrencyPriceShare: string;
     ExchangeRate: string;
     Result: string;
@@ -24,10 +24,11 @@ export type StockEvent = {
     CurrencyFinraFee: string;
 }
 
-export type Holding = {
+// A single share of a stock
+export type Share = {
     Ticker: string;
-    NoOfShares: number;
-    TestPassTime: number;
-    BuyDate: string;
+    BuyDate: Date;
     BuyPrice: number;
+    SellPrice?: number;
+    SellDate?: Date;
 }

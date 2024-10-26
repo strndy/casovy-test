@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Holding, StockEvent } from './src/types';
-import { readCSV } from './src/modules/csv';
-import { parseStockEvents } from './src/parseStockEvents';
+import { readCSV } from './src/modules/csv/csv';
+import { parseStockEvents } from './src/parseStockEvents/parseStockEvents';
 
 
 

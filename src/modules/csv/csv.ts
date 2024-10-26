@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse';
 import * as fs from 'fs';
-import { StockEvent } from "../types";
-import { toPascalCase } from "../toPascalCase";
+import { StockEvent } from "../../types";
+import { toPascalCase } from "./toPascalCase";
 
 
 export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
@@ -16,6 +16,12 @@ export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
                 if (context.column === 'Time') {
                     return new Date(value);
                 }
+                if (context.column === 'NoOfShares') {
+                    return parseInt(value);
+                }
+                if (context.column === 'PriceShare') {
+                    return parseFloat(value);
+                }
                 return value;
             }
         }));
@@ -24,6 +30,6 @@ export const readCSV = async (filePath: string): Promise<StockEvent[]> => {
         records.push(record);
     }
 
-    
+
     return records;
 }

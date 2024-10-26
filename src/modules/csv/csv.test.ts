@@ -9,5 +9,5 @@ describe('readCSV', () => {
     expect(result[1].Action).toBe('Market buy');
     // checks snapshot
     expect(result).toMatchSnapshot();
-  });
+  }); 
 });

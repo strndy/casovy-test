@@ -29,6 +29,8 @@ export type Share = {
     Ticker: string;
     BuyDate: Date;
     BuyPrice: number;
+    BuyEventId: string;
     SellPrice?: number;
     SellDate?: Date;
+    SellEventId?: string;
 }

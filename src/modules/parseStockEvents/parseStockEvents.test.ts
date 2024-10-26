@@ -1,5 +1,5 @@
 import { organizeStockPurchases } from "./parseStockEvents";
-import { mockStockEvents, mockStockEventsOutOfOrder } from "./parseStockEvents.mock";
+import { mockStockEvents, mockStockEventsDuplicateID, mockStockEventsOutOfOrder } from "./parseStockEvents.mock";
 
 
 
@@ -14,5 +14,9 @@ describe('parseStockEvents', () => {
 
     it('should throw error if events are out of order', async () => {
         await expect(organizeStockPurchases(mockStockEventsOutOfOrder)).rejects.toThrow('Events are not in order');
+    });
+    
+    it('should throw error if there are duplicate events by ID', async () => {
+        await expect(organizeStockPurchases(mockStockEventsDuplicateID)).rejects.toThrow('Duplicate events by ID');
     });
 });

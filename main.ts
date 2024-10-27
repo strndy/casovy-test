@@ -2,8 +2,9 @@ import * as path from 'path';
 import { Event, Share } from './src/types';
 import { readCSV } from './src/modules/csv/csv';
 import { organizeStockPurchases } from './src/modules/parseStockEvents/parseStockEvents';
-import { visualiseExpiration } from './src/modules/visualise/visualise';
+import { visualiseCSV, visualiseExpiration } from './src/modules/visualise/visualise';
 import { loadSplits } from './src/modules/split/splitCache';
+import { enhanceCSVWithSplits } from './src/modules/enhnace/enhace';
 
 
 
@@ -22,12 +23,12 @@ const main = async () => {
         console.log(allTickers, allTickers.length);
         // load splits from polygon
         const splits = await loadSplits(allTickers);
-        // enhance the csv data for splits
-        
-        const csvDataWithSplits = enhanceCSVWithSplits(csvData, splits);
-        // organize the stock purchases
+        console.log(splits, splits.length);
+
+        const enhanced = enhanceCSVWithSplits(csvData, splits);
+        visualiseCSV(enhanced);
  
-        // const result = await organizeStockPurchases(csvData);
+        const result = await organizeStockPurchases(enhanced);
         // visualiseExpiration(result);
 
     } catch (error) {

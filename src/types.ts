@@ -22,6 +22,8 @@ export type Event = {
     ID: string;
     CurrencyTransactionFee: string;
     CurrencyFinraFee: string;
+    SplitFrom?: number;
+    SplitTo?: number;
 }
 
 // A single share of a stock

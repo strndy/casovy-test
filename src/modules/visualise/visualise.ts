@@ -1,4 +1,4 @@
-import { Share } from "../../types";
+import { Event, Share } from "../../types";
 
 function formatDate(date: Date): string {
     return date.toLocaleDateString('cs-CZ', {
@@ -32,3 +32,18 @@ export const visualiseExpiration = (holding: Record<string, Share[]>) => {
         console.table(formattedShares);
     }
 }
+
+export const visualiseCSV = (csv: Event[]) => {
+    const output = csv.map(row => {
+        return {
+            // ...row,
+            Ticker: row.Ticker,
+            Time: formatDate(new Date(row.Time)),
+            Action: row.Action,
+            Notes: row.Notes,
+            
+        };
+    });
+    console.table(output);
+}
+

@@ -1,10 +1,10 @@
-import { Share, Event } from "../../types";
+import { Share, Event, Split } from "../../types";
 
 const TIME_TEST_DAYS = 365 * 3;
 
 // Split the stock events into individual shares
 export const organizeStockPurchases = async (csvData: Event[]): Promise<Record<string, Share[]>> => {
-    const holding: Record<string, Share[]> = {};
+    const holdings: Record<string, Share[]> = {};
     // verify order of events
     let prevEvent: Event | null = null;
 
@@ -19,14 +19,23 @@ export const organizeStockPurchases = async (csvData: Event[]): Promise<Record<s
         prevEvent = event;
         // create collection of individual shares
         if (event.Action.endsWith('buy')) {
-            addShareToHolding(event, holding);
+            addShareToHoldings(event, holdings);
         }
-        // we are selling the oldest shares by czech law
+
+        // process splits
+        if (event.Action.startsWith('Split')) {
+            processSplit(event, holdings);
+        }
+
+            // we are selling the oldest shares by czech law
         if (event.Action.endsWith('sell')) {
-            markSold(holding, event);
+            markSold(holdings, event);
         }
     });
-    return holding;
+
+
+
+    return holdings;
 }
 
 const verifyNoDuplicateEvents = (events: Event[]) => {
@@ -39,7 +48,7 @@ const verifyNoDuplicateEvents = (events: Event[]) => {
     }
 }
 
-const addShareToHolding = (event: Event, holding: Record<string, Share[]>) => {
+const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => {
     for (let i = 0; i < event.NoOfShares; i++) {
         const share: Share = {
             Ticker: event.Ticker,
@@ -47,19 +56,19 @@ const addShareToHolding = (event: Event, holding: Record<string, Share[]>) => {
             BuyPrice: event.PriceShare,
             BuyEventId: event.ID,
         }
-        if (!holding[event.Ticker]) {
-            holding[event.Ticker] = [];
+        if (!holdings[event.Ticker]) {
+            holdings[event.Ticker] = [];
         }
-        holding[event.Ticker].push(share);
+        holdings[event.Ticker].push(share);
     }
 }
 
-const markSold = (holding: Record<string, Share[]>, event: Event) => {
-    if(!holding[event.Ticker]) {
+const markSold = (holdings: Record<string, Share[]>, event: Event) => {
+    if(!holdings[event.Ticker]) {
         console.warn(`No shares to sell for ${event.Ticker}. Fractional is not supported.`);
         return;
     }
-    const notSold = holding[event.Ticker].filter(s => !s.SellDate);
+    const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
     
     for (let i = 0; i < event.NoOfShares; i++) {
         if(!notSold[i]) {
@@ -71,3 +80,14 @@ const markSold = (holding: Record<string, Share[]>, event: Event) => {
         notSold[i].SellEventId = event.ID;
     }
 }
+
+const processSplit = (event: Event, holdings: Record<string, Share[]>) => {
+    holdings[event.Ticker] = holdings[event.Ticker].map(share => {
+        return {
+            ...share,
+            SplitFrom: event.SplitFrom,
+            SplitTo: event.SplitTo
+        }
+    });
+}
+

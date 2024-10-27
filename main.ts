@@ -23,7 +23,8 @@ const main = async () => {
         // load splits from polygon
         const splits = await loadSplits(allTickers);
         // enhance the csv data for splits
-        // const csvDataWithSplits = enhanceCSVWithSplits(csvData, splits);
+        
+        const csvDataWithSplits = enhanceCSVWithSplits(csvData, splits);
         // organize the stock purchases
  
         // const result = await organizeStockPurchases(csvData);

@@ -10,7 +10,7 @@ export const fetchSplits = async (stockTicker: string) : Promise<Split[]> => {
     const response = await fetch(url);
     const data = await response.json();
     if (data.status != "OK") {
-        console.error(data);
+        // console.error(data);
         throw new Error(`Failed to load splits for ${stockTicker}`);
     }
     return data.results as Split [];

@@ -36,8 +36,6 @@ export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: str
             markSold(holdings, event);
         }
 
-        console.table(holdings[event.Ticker]);
-        console.log('Total shares:', holdings[event.Ticker].reduce((sum, share) => sum + share.Quantity, 0));
     });
 
 
@@ -95,14 +93,20 @@ const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => 
 
 const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     if(!holdings[event.Ticker]) {
-        console.warn(`No shares to sell for ${event.Ticker}. Fractional is not supported.`);
-        return;
+        throw new Error(`No shares to sell for ${event.Ticker}`);
     }
     const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
     
+    // Calculate initial total shares
+    const initialTotal = holdings[event.Ticker].reduce((sum, share) => sum + share.Quantity, 0);
+    const initialNotSold = notSold.reduce((sum, share) => sum + share.Quantity, 0);
+    const initialSold = holdings[event.Ticker].filter(s => s.SellDate).reduce((sum, share) => sum + share.Quantity, 0);
+    
     let remainingToSell = event.NoOfShares;
     let index = 0;
-    
+
+    display(holdings[event.Ticker]);
+
     while (remainingToSell > 0 && index < notSold.length) {
         const selling = notSold[index];
         if (!selling) {
@@ -116,8 +120,9 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             if (remainingToSell < selling.Quantity) {
                 // Split the fractional share
                 const remainingShare = {
-                    ...selling,
-                    Quantity: selling.Quantity - remainingToSell
+                    ...JSON.parse(JSON.stringify(selling)),
+                    Quantity: selling.Quantity - remainingToSell,
+                    Notes: `${selling.Notes} (remaining fraction)`
                 };
                 
                 selling.Quantity = remainingToSell;
@@ -125,7 +130,8 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
                 selling.SellPrice = event.PriceShare;
                 selling.SellEventId = event.ID;
                 
-                notSold.splice(index + 1, 0, remainingShare);
+                // notSold.splice(index + 1, 0, remainingShare);
+                holdings[event.Ticker].push(remainingShare);
                 remainingToSell = 0;
             } else {
                 // Sell entire fractional share
@@ -137,13 +143,15 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             }
             continue;
         }
+        display(holdings[event.Ticker]);
 
         // Handle case where we need to partially sell a share
         if (remainingToSell < selling.Quantity) {
             // Split the share into sold and remaining portions
             const remainingShare = {
-                ...selling,
-                Quantity: selling.Quantity - remainingToSell
+                ...JSON.parse(JSON.stringify(selling)),
+                Quantity: selling.Quantity - remainingToSell,
+                Notes: `${selling.Notes} (remaining fraction)`
             };
             
             selling.Quantity = remainingToSell;
@@ -152,7 +160,7 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             selling.SellEventId = event.ID;
             
             // Insert the remaining unsold portion
-            notSold.splice(index + 1, 0, remainingShare);
+            holdings[event.Ticker].push(remainingShare);
             remainingToSell = 0;
         } else {
             // Sell entire share
@@ -162,11 +170,38 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             remainingToSell -= selling.Quantity;
             index++;
         }
+        display(holdings[event.Ticker]);
     }
 
     if (remainingToSell > 0) {
-        console.warn(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`);
+        throw new Error(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`);
     }
+
+    // Calculate final total shares and verify the difference matches what was sold
+    const finalTotal = holdings[event.Ticker].reduce((sum, share) => sum + share.Quantity, 0);
+    const finalNotSold = holdings[event.Ticker].filter(s => !s.SellDate).reduce((sum, share) => sum + share.Quantity, 0);
+    const finalSold = holdings[event.Ticker].filter(s => s.SellDate).reduce((sum, share) => sum + share.Quantity, 0);
+    
+    const checksumRegardlesOfState = initialTotal - finalTotal;
+
+    const checksumNotSold = initialNotSold - finalNotSold - event.NoOfShares;
+    const checksumSold = initialSold - finalSold + event.NoOfShares;
+
+    console.log({selling: event.NoOfShares, initialTotal, finalTotal, checksumRegardlesOfState, initialNotSold, finalNotSold, checksumNotSold, initialSold, finalSold, checksumSold});
+    
+    if (Math.abs(checksumRegardlesOfState) > 0.01 || Math.abs(checksumNotSold) > 0.01 || Math.abs(checksumSold) > 0.01) { // Using small epsilon for floating point comparison
+        console.table(holdings[event.Ticker]);
+        
+        console.warn({selling: event.NoOfShares, initialTotal, finalTotal, checksumRegardlesOfState, initialNotSold, finalNotSold, checksumNotSold, initialSold, finalSold, checksumSold});
+   
+        // console.warn(`Mismatch! initial: ${initialTotal}, final: ${finalTotal}, checksumRegardlesOfState: ${checksumRegardlesOfState}`);
+        throw new Error(`Checkum failed after sale!`);
+    }
+}
+
+const display = (holding) => {
+    // console.table(holding);
+    // console.log('Total shares:', holding.reduce((sum, share) => sum + share.Quantity, 0));
 }
 
 const processSplit = (e: Event, holdings: Record<string, Share[]>) => {

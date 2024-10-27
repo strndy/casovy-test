@@ -1,12 +1,11 @@
 import { visualiseCSV, visualiseExpiration } from "../visualise/visualise";
 import { organizeStockPurchases } from "./parseStockEvents";
 import { mockStockEvents, mockStockEventsDuplicateID, mockStockEventsOutOfOrder } from "./parseStockEvents.mock";
-import { mockStockEventsFractional } from "./parseStockEventsFractional.mock";
+import { mockStockEventsFractional, mockStockEventsFractional2, mockStockEventsFractional3 } from "./parseStockEventsFractional.mock";
 
 
 
 describe('parseStockEvents', () => {
-    return;
     it('should have all the stocks and marked sold shares', async () => {
         // visualiseCSV(mockStockEvents);
         // expect(mockStockEvents.filter(m=>m.Action.endsWith('sell')).length).toBe(2);
@@ -30,29 +29,37 @@ describe('parseStockEvents', () => {
 
 describe('parseStockEventsFractional', () => {
     it('should handle fractional shares', async () => {
-        const result = await organizeStockPurchases(mockStockEventsFractional);
+        const result = await organizeStockPurchases(mockStockEventsFractional as any);
+        // Test scenario:
+        // buy 0.5
+        // split 2:1, we have 2x 0.5
+        // buy 0.5 we have 3x 0.5
+        // sell 1.5, we have 0 leftt, 3 fractional peices overall
         console.table(result['AAPL']);
         expect(result).toBeDefined();
         expect(result['AAPL']).toBeDefined();
-        
-        // Verify initial fractional shares
-        expect(result['AAPL'].length).toBe(3); // 2.5 shares total
-        expect(result['AAPL'][0].Quantity).toBe(1);
-        expect(result['AAPL'][1].Quantity).toBe(1);
-        expect(result['AAPL'][2].Quantity).toBe(0.5);
-
-        // Verify selling partial fractional share
-        const soldShares = result['AAPL'].filter(s => s.SellDate);
-        expect(soldShares.length).toBe(2); // 1.3 shares sold
-        expect(soldShares[0].Quantity).toBe(1);
-        expect(soldShares[1].Quantity).toBe(0.3);
-
-        // Verify remaining shares
-        const remainingShares = result['AAPL'].filter(s => !s.SellDate);
-        expect(remainingShares.length).toBe(2);
-        expect(remainingShares[0].Quantity).toBe(1);
-        expect(remainingShares[1].Quantity).toBe(0.2); // 0.5 - 0.3 = 0.2
-
         expect(result).toMatchSnapshot();
+    });
+    it('should handle fractional shares 2', async () => {
+        const result = await organizeStockPurchases(mockStockEventsFractional2 as any); 
+        expect(result).toBeDefined();
+        expect(result['AAPL'].length).toBe(6);
+        const sumAll = result['AAPL'].reduce((sum, share) => sum + share.Quantity, 0);
+        expect(sumAll).toBe(1.5066);
+        const sumSold = result['AAPL'].filter(s => s.SellDate).reduce((sum, share) => sum + share.Quantity, 0);
+        expect(sumSold).toBe(1.346);
+        console.table(result['AAPL']);
+        // expect(result).toMatchSnapshot();
+    });
+
+    it('should handle fractional shares 3', async () => {
+        const result = await organizeStockPurchases(mockStockEventsFractional3 as any);
+        expect(result).toBeDefined();
+        console.table(result['AAPL']);
+        expect(result['AAPL'].length).toBe(6);
+        const sumAll = result['AAPL'].reduce((sum, share) => sum + share.Quantity, 0);
+        expect(sumAll).toBe(4.4);
+        const sumNotSold = result['AAPL'].filter(s => !s.SellDate).reduce((sum, share) => sum + share.Quantity, 0);
+        expect(sumNotSold).toBe(1.06);
     });
 });

@@ -3,4 +3,3 @@ module.exports = {
   testEnvironment: 'node',
   watchPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist/', '<rootDir>/splitDb/'],
 };
-

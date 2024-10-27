@@ -10,8 +10,8 @@ export const fetchSplits = async (stockTicker: string) : Promise<Split[]> => {
     const response = await fetch(url);
     const data = await response.json();
     if (data.status != "OK") {
-        // console.error(data);
         throw new Error(`Failed to load splits for ${stockTicker}`);
     }
+    data.results.forEach((s: Split) => s.execution_date = new Date(s.execution_date));
     return data.results as Split [];
 }

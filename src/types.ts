@@ -36,7 +36,7 @@ export type Share = {
 }
 
 export type Split = {
-    execution_date: string;
+    execution_date: Date;
     id: string;
     split_from: number;
     split_to: number;

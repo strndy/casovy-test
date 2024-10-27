@@ -9,7 +9,7 @@ function l(message: string) {
     process.stdout.write(message + " ");
 }
 
-export const splitCache = async (ticker: string, loadsplit: () => Promise<Split[]>) => {
+export const splitCache = async (ticker: string, loadsplit: () => Promise<Split[]>) : Promise<Split[]> => {
     const splitFilePath = path.join(__dirname, `../../../splitDb/splits_${ticker}.json`);
     try {
         const stats = await fs.stat(splitFilePath);
@@ -17,18 +17,20 @@ export const splitCache = async (ticker: string, loadsplit: () => Promise<Split[
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         
         if (stats.mtime < oneWeekAgo) {
-            l(`${ticker} exp.,`);
+            l(`${ticker} exppired,`);
             throw new Error('Cache is older than a week');
         }
 
         const cached = await fs.readFile(splitFilePath, 'utf8');
         const parsed = JSON.parse(cached);
-        l(`${ticker} ${parsed.length} hit`);
-        return parsed;
+        const typed = parsed.map((s: Split) => ({...s, execution_date: new Date(s.execution_date)}));
+        l(`${ticker} ${typed.length} hit`);
+        return typed;
 
     } catch (error) {
         const splits = await loadsplit();
         await fs.writeFile(splitFilePath, JSON.stringify(splits, null, 2));
+
         l(`${ticker} ${splits.length} miss`);
         return splits;
     }

@@ -8,6 +8,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127307064",
       "BuyPrice": 5,
       "Notes": "",
+      "Quantity": 1,
       "SellDate": 2021-12-09T07:00:07.000Z,
       "SellEventId": "EOF127497999",
       "SellPrice": 6,
@@ -18,6 +19,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127307064",
       "BuyPrice": 5,
       "Notes": "",
+      "Quantity": 1,
       "SellDate": 2023-01-13T07:00:06.000Z,
       "SellEventId": "EOF130966991",
       "SellPrice": 8,
@@ -28,6 +30,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127307064",
       "BuyPrice": 5,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "AA",
     },
     {
@@ -35,6 +38,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127596919",
       "BuyPrice": 4,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "AA",
     },
   ],
@@ -44,6 +48,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127347450",
       "BuyPrice": 5,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -51,6 +56,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF127347450",
       "BuyPrice": 5,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -58,6 +64,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -65,6 +72,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -72,6 +80,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -79,6 +88,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -86,6 +96,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
     {
@@ -93,6 +104,7 @@ exports[`E2E should parse the real CSV  1`] = `
       "BuyEventId": "EOF130966990",
       "BuyPrice": 8,
       "Notes": "",
+      "Quantity": 1,
       "Ticker": "BB",
     },
   ],

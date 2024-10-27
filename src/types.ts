@@ -29,6 +29,7 @@ export type Event = {
 // A single share of a stock
 export type Share = {
     Ticker: string;
+    Quantity: number;
     BuyDate: Date;
     BuyPrice: number;
     BuyEventId: string;

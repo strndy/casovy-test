@@ -1,3 +1,4 @@
+import { ExitStatus } from "typescript";
 import { Share, Event, Split } from "../../types";
 
 const TIME_TEST_DAYS = 365 * 3;
@@ -34,6 +35,9 @@ export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: str
         if (event.Action.endsWith('sell')) {
             markSold(holdings, event);
         }
+
+        console.table(holdings[event.Ticker]);
+        console.log('Total shares:', holdings[event.Ticker].reduce((sum, share) => sum + share.Quantity, 0));
     });
 
 
@@ -52,10 +56,16 @@ const verifyNoDuplicateEvents = (events: Event[]) => {
 }
 
 const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => {
-    for (let i = 0; i < event.NoOfShares; i++) {
+    // Handle full shares
+    const fullShares = Math.floor(event.NoOfShares);
+    const fraction = event.NoOfShares - fullShares;
+
+    // Add full shares individually
+    for (let i = 0; i < fullShares; i++) {
         const share: Share = {
             Ticker: event.Ticker,
-            BuyDate: event.Time,
+            Quantity: 1,
+            BuyDate: new Date(event.Time),
             BuyPrice: event.PriceShare,
             BuyEventId: event.ID,
             Notes: event.Notes
@@ -64,6 +74,22 @@ const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => 
             holdings[event.Ticker] = [];
         }
         holdings[event.Ticker].push(share);
+    }
+
+    // Add fractional share if exists
+    if (fraction > 0) {
+        const fractionalShare: Share = {
+            Ticker: event.Ticker,
+            Quantity: fraction,
+            BuyDate: new Date(event.Time),
+            BuyPrice: event.PriceShare,
+            BuyEventId: event.ID,
+            Notes: `${event.Notes} (fractional)`
+        }
+        if (!holdings[event.Ticker]) {
+            holdings[event.Ticker] = [];
+        }
+        holdings[event.Ticker].push(fractionalShare);
     }
 }
 
@@ -74,19 +100,72 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     }
     const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
     
-    for (let i = 0; i < event.NoOfShares; i++) {
-        const selling = notSold[i];
-        if(!selling) {
-            console.warn(`No shares to sell for ${event.Ticker}. Fractional is not supported.`);
-            return;
+    let remainingToSell = event.NoOfShares;
+    let index = 0;
+    
+    while (remainingToSell > 0 && index < notSold.length) {
+        const selling = notSold[index];
+        if (!selling) {
+            throw new Error(`No shares to sell for ${event.Ticker}`);
         }
-        if(selling.SellDate) {
-            throw new Error(`Share ${i} already sold`);
+        if (selling.SellDate) {
+            throw new Error(`Share ${index} already sold`);
         }
-        // console.log(`Marking share ${selling.BuyEventId} as sold on sell ${event.ID}`);
-        selling.SellDate = new Date(event.Time);
-        selling.SellPrice = event.PriceShare;
-        selling.SellEventId = event.ID;
+        // Handle fractional shares
+        if (selling.Quantity < 1) {
+            if (remainingToSell < selling.Quantity) {
+                // Split the fractional share
+                const remainingShare = {
+                    ...selling,
+                    Quantity: selling.Quantity - remainingToSell
+                };
+                
+                selling.Quantity = remainingToSell;
+                selling.SellDate = new Date(event.Time);
+                selling.SellPrice = event.PriceShare;
+                selling.SellEventId = event.ID;
+                
+                notSold.splice(index + 1, 0, remainingShare);
+                remainingToSell = 0;
+            } else {
+                // Sell entire fractional share
+                selling.SellDate = new Date(event.Time);
+                selling.SellPrice = event.PriceShare;
+                selling.SellEventId = event.ID;
+                remainingToSell -= selling.Quantity;
+                index++;
+            }
+            continue;
+        }
+
+        // Handle case where we need to partially sell a share
+        if (remainingToSell < selling.Quantity) {
+            // Split the share into sold and remaining portions
+            const remainingShare = {
+                ...selling,
+                Quantity: selling.Quantity - remainingToSell
+            };
+            
+            selling.Quantity = remainingToSell;
+            selling.SellDate = new Date(event.Time);
+            selling.SellPrice = event.PriceShare;
+            selling.SellEventId = event.ID;
+            
+            // Insert the remaining unsold portion
+            notSold.splice(index + 1, 0, remainingShare);
+            remainingToSell = 0;
+        } else {
+            // Sell entire share
+            selling.SellDate = new Date(event.Time);
+            selling.SellPrice = event.PriceShare;
+            selling.SellEventId = event.ID;
+            remainingToSell -= selling.Quantity;
+            index++;
+        }
+    }
+
+    if (remainingToSell > 0) {
+        console.warn(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`);
     }
 }
 

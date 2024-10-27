@@ -34,3 +34,11 @@ export type Share = {
     SellDate?: Date;
     SellEventId?: string;
 }
+
+export type Split = {
+    execution_date: string;
+    id: string;
+    split_from: number;
+    split_to: number;
+    ticker: string;
+}

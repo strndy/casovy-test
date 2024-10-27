@@ -1,5 +1,9 @@
-{
-  "results": [],
-  "status": "OK",
-  "request_id": "151c1ba556f117a598a962a89a4682de"
-}
+[
+  {
+    "execution_date": "2005-10-21",
+    "id": "E6fab3436e2dcdb6f42f2a26f173a8bf4a7576211011a736667701c307ef1ff86",
+    "split_from": 1,
+    "split_to": 3.5,
+    "ticker": "RLGT"
+  }
+]

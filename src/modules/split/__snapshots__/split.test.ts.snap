@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`split should cache splits 1`] = `
+[
+  {
+    "execution_date": "2005-10-21",
+    "id": "E6fab3436e2dcdb6f42f2a26f173a8bf4a7576211011a736667701c307ef1ff86",
+    "split_from": 1,
+    "split_to": 3.5,
+    "ticker": "RLGT",
+  },
+]
+`;
+
+exports[`split should cache splits 2`] = `
+[
+  {
+    "execution_date": "2005-10-21",
+    "id": "E6fab3436e2dcdb6f42f2a26f173a8bf4a7576211011a736667701c307ef1ff86",
+    "split_from": 1,
+    "split_to": 3.5,
+    "ticker": "RLGT",
+  },
+]
+`;
+
+exports[`split should load multiple stocks splits from polygon 1`] = `
+[
+  [
+    {
+      "execution_date": "2022-08-25",
+      "id": "Ea58e4c7785a1f9b68c3641137e7319bd7f7ff71d006d3132e0d0141b03860eb9",
+      "split_from": 1,
+      "split_to": 3,
+      "ticker": "TSLA",
+    },
+    {
+      "execution_date": "2020-08-31",
+      "id": "Ec6bfc0213a18bfe35770ec1c95dc1f2ee90e99ab3dc94aad5e9adbe54ad2d6d2",
+      "split_from": 1,
+      "split_to": 5,
+      "ticker": "TSLA",
+    },
+  ],
+  [
+    {
+      "execution_date": "2020-08-31",
+      "id": "E36416cce743c3964c5da63e1ef1626c0aece30fb47302eea5a49c0055c04e8d0",
+      "split_from": 1,
+      "split_to": 4,
+      "ticker": "AAPL",
+    },
+    {
+      "execution_date": "2014-06-09",
+      "id": "E91a6b74ca1a9dcbce26a1f34e24ae26ba2c6359822ccf901ecd827f419137654",
+      "split_from": 1,
+      "split_to": 7,
+      "ticker": "AAPL",
+    },
+    {
+      "execution_date": "2005-02-28",
+      "id": "E90a77bdf742661741ed7c8fc086415f0457c2816c45899d73aaa88bdc8ff6025",
+      "split_from": 1,
+      "split_to": 2,
+      "ticker": "AAPL",
+    },
+  ],
+]
+`;

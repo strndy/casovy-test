@@ -3,7 +3,7 @@ import { Event, Share } from './src/types';
 import { readCSV } from './src/modules/csv/csv';
 import { organizeStockPurchases } from './src/modules/parseStockEvents/parseStockEvents';
 import { visualiseExpiration } from './src/modules/visualise/visualise';
-import { loadSplits, loadSplitsFromPolygon } from './src/modules/split/split';
+import { loadSplits, loadSplitsFromPolygon } from './src/modules/split/polygonAPi';
 
 
 

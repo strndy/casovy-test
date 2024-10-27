@@ -3,7 +3,7 @@ import { Share, Event, Split } from "../../types";
 const TIME_TEST_DAYS = 365 * 3;
 
 // Split the stock events into individual shares
-export const organizeStockPurchases = async (csvData: Event[]): Promise<Record<string, Share[]>> => {
+export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: string[] = []): Promise<Record<string, Share[]>> => {
     const holdings: Record<string, Share[]> = {};
     // verify order of events
     let prevEvent: Event | null = null;
@@ -12,6 +12,9 @@ export const organizeStockPurchases = async (csvData: Event[]): Promise<Record<s
     verifyNoDuplicateEvents(csvData);
 
     csvData.forEach((event) => {
+        if(ignoreStocks.includes(event.Ticker)) {
+            return;
+        }
         // verify order of events
         if (prevEvent && prevEvent.Time > event.Time) {
             throw new Error('Events are not in order');
@@ -81,7 +84,7 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             throw new Error(`Share ${i} already sold`);
         }
         // console.log(`Marking share ${selling.BuyEventId} as sold on sell ${event.ID}`);
-        selling.SellDate = event.Time;
+        selling.SellDate = new Date(event.Time);
         selling.SellPrice = event.PriceShare;
         selling.SellEventId = event.ID;
     }

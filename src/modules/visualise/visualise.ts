@@ -19,12 +19,20 @@ export const visualiseExpiration = (holding: Record<string, Share[]>) => {
             });
             if (share.SellDate) {
                 result.SellDate = formatDate(new Date(share.SellDate));
-                result.DaysHeld = Math.round((share.SellDate.getTime() - share.BuyDate.getTime()) / (1000 * 60 * 60 * 24));
+
+                if(share.SellDate instanceof Date) {
+                    result.DaysHeld = Math.round((share.SellDate.getTime() - share.BuyDate.getTime()) / (1000 * 60 * 60 * 24));
+                } else {
+                    console.error(share);
+                    // throw new Error('SellDate is not a Date');
+            
+               }
             } else {
                 result.age = Math.round((new Date().getTime() - share.BuyDate.getTime()) / (1000 * 60 * 60 * 24));
                 if(result.age > 365 * 3) {
                     result.passed3Years = true;
                 }
+                result.monthsTill3Years = Math.round((365 * 3 - result.age) / 30);
             }
             return result;
         });

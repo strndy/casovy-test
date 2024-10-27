@@ -30,7 +30,7 @@ const main = async () => {
             .map(row => row.Ticker)
             .filter((value, index, self) => self.indexOf(value) === index)
             .filter(ticker => ticker.length > 1);
-    
+
         console.log(allTickers, allTickers.length);
         // load splits from polygon
         const splits = await loadSplits(allTickers);
@@ -39,7 +39,7 @@ const main = async () => {
         const enhanced = enhanceCSVWithSplits(csvData, splits);
         visualiseCSV(enhanced);
  
-        const result = await organizeStockPurchases(enhanced);
+        const result = await organizeStockPurchases(enhanced, ['DM']);
         visualiseExpiration(result);
 
     } catch (error) {

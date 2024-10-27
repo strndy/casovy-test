@@ -8,6 +8,7 @@ describe('E2E', () => {
         const csvPath = path.join(__dirname, './testfile1.csv');
         const csvData = await readCSV(csvPath);
         const result = await organizeStockPurchases(csvData);
-        visualiseExpiration(result);
+        expect(result).toMatchSnapshot();
+        // visualiseExpiration(result);
     }, 10000);
 });

@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`E2E should parse the real CSV  1`] = `
+{
+  "AA": [
+    {
+      "BuyDate": 2019-12-05T08:42:00.000Z,
+      "BuyEventId": "EOF127307064",
+      "BuyPrice": 5,
+      "Notes": "",
+      "SellDate": 2021-12-09T07:00:07.000Z,
+      "SellEventId": "EOF127497999",
+      "SellPrice": 6,
+      "Ticker": "AA",
+    },
+    {
+      "BuyDate": 2019-12-05T08:42:00.000Z,
+      "BuyEventId": "EOF127307064",
+      "BuyPrice": 5,
+      "Notes": "",
+      "SellDate": 2023-01-13T07:00:06.000Z,
+      "SellEventId": "EOF130966991",
+      "SellPrice": 8,
+      "Ticker": "AA",
+    },
+    {
+      "BuyDate": 2019-12-05T08:42:00.000Z,
+      "BuyEventId": "EOF127307064",
+      "BuyPrice": 5,
+      "Notes": "",
+      "Ticker": "AA",
+    },
+    {
+      "BuyDate": 2021-12-10T07:44:18.000Z,
+      "BuyEventId": "EOF127596919",
+      "BuyPrice": 4,
+      "Notes": "",
+      "Ticker": "AA",
+    },
+  ],
+  "BB": [
+    {
+      "BuyDate": 2020-07-05T13:30:00.000Z,
+      "BuyEventId": "EOF127347450",
+      "BuyPrice": 5,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2020-07-05T13:30:00.000Z,
+      "BuyEventId": "EOF127347450",
+      "BuyPrice": 5,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+    {
+      "BuyDate": 2023-01-13T07:00:06.000Z,
+      "BuyEventId": "EOF130966990",
+      "BuyPrice": 8,
+      "Notes": "",
+      "Ticker": "BB",
+    },
+  ],
+}
+`;

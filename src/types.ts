@@ -35,6 +35,7 @@ export type Share = {
     SellPrice?: number;
     SellDate?: Date;
     SellEventId?: string;
+    Notes?: string;
 }
 
 export type Split = {

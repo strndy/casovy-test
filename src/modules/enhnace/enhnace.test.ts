@@ -20,7 +20,7 @@ describe('enhance', () => {
     it('should enhance csv with splits', () => { 
         
         const enhanced = enhanceCSVWithSplits(mockStockEvents, mockSplits);
-        visualiseCSV(enhanced);
+        // visualiseCSV(enhanced);
         expect(enhanced).toBeDefined();
         expect(enhanced).toMatchSnapshot();
     });

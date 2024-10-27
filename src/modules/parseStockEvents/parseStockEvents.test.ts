@@ -7,11 +7,12 @@ import { mockStockEvents, mockStockEventsDuplicateID, mockStockEventsOutOfOrder 
 describe('parseStockEvents', () => {
     it('should have all the stocks and marked sold shares', async () => {
         const result = await organizeStockPurchases(mockStockEvents);
+        console.table(result['AAPL']);
         expect(result).toBeDefined();
         expect(result).toMatchSnapshot();
         expect(result['AAPL'].length).toBe(4);
         expect(result['AAPL'].filter(s => !s.SellDate).length).toBe(2);
-        // visualise(result);
+
     });
 
     it('should throw error if events are out of order', async () => {

@@ -55,6 +55,7 @@ const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => 
             BuyDate: event.Time,
             BuyPrice: event.PriceShare,
             BuyEventId: event.ID,
+            Notes: event.Notes
         }
         if (!holdings[event.Ticker]) {
             holdings[event.Ticker] = [];
@@ -81,13 +82,34 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     }
 }
 
-const processSplit = (event: Event, holdings: Record<string, Share[]>) => {
-    holdings[event.Ticker] = holdings[event.Ticker].map(share => {
-        return {
-            ...share,
-            SplitFrom: event.SplitFrom,
-            SplitTo: event.SplitTo
+const processSplit = (e: Event, holdings: Record<string, Share[]>) => {
+    if (e.SplitFrom > 1){
+        throw new Error('Split from is greater than 1, not implemented');
+    }
+    console.log(`Splitting ${e.Ticker} ${e.SplitTo}x on ${e.Time} from ${holdings[e.Ticker].length} shares`);
+    const newHolding : Share[] = [];
+    const sold = holdings[e.Ticker].filter(s => s.SellDate);
+    const notSold = holdings[e.Ticker].filter(s => !s.SellDate);
+
+    for (let i = 0; i < notSold.length; i++) {
+        const oldShare = holdings[e.Ticker][i];
+        const share = {
+            ...oldShare,
+            BuyPrice: oldShare.BuyPrice / e.SplitTo,
+            Notes: `Split ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]}, ${oldShare.Notes}`
         }
-    });
+        for (let j = 0; j < e.SplitTo; j++) {
+            newHolding.push(share);
+        }
+    }
+    holdings[e.Ticker] = [
+        ...sold,
+        ...newHolding
+    ];
+    console.log(sold, newHolding);
+
+    console.log(holdings[e.Ticker]);
+    
+    console.log(`Splitting to ${e.Ticker} ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]} to ${holdings[e.Ticker].length} shares`);
 }
 

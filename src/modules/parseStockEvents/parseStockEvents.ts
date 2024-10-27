@@ -27,7 +27,7 @@ export const organizeStockPurchases = async (csvData: Event[]): Promise<Record<s
             processSplit(event, holdings);
         }
 
-            // we are selling the oldest shares by czech law
+        // we are selling the oldest shares by czech law
         if (event.Action.endsWith('sell')) {
             markSold(holdings, event);
         }
@@ -72,21 +72,32 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
     
     for (let i = 0; i < event.NoOfShares; i++) {
-        if(!notSold[i]) {
+        const selling = notSold[i];
+        if(!selling) {
             console.warn(`No shares to sell for ${event.Ticker}. Fractional is not supported.`);
             return;
         }
-        notSold[i].SellDate = event.Time;
-        notSold[i].SellPrice = event.PriceShare;
-        notSold[i].SellEventId = event.ID;
+        if(selling.SellDate) {
+            throw new Error(`Share ${i} already sold`);
+        }
+        // console.log(`Marking share ${selling.BuyEventId} as sold on sell ${event.ID}`);
+        selling.SellDate = event.Time;
+        selling.SellPrice = event.PriceShare;
+        selling.SellEventId = event.ID;
     }
 }
 
 const processSplit = (e: Event, holdings: Record<string, Share[]>) => {
+
+    if(!holdings[e.Ticker]) {
+        // no shares to split, ignore
+        return;
+    }
     if (e.SplitFrom > 1){
+        console.error(e);
         throw new Error('Split from is greater than 1, not implemented');
     }
-    console.log(`Splitting ${e.Ticker} ${e.SplitTo}x on ${e.Time} from ${holdings[e.Ticker].length} shares`);
+    // console.log(`Splitting ${e.Ticker} ${e.SplitTo}x on ${e.Time} from ${holdings[e.Ticker].length} shares`);
     const newHolding : Share[] = [];
     const sold = holdings[e.Ticker].filter(s => s.SellDate);
     const notSold = holdings[e.Ticker].filter(s => !s.SellDate);
@@ -94,7 +105,8 @@ const processSplit = (e: Event, holdings: Record<string, Share[]>) => {
     for (let i = 0; i < notSold.length; i++) {
         const oldShare = holdings[e.Ticker][i];
         const share = {
-            ...oldShare,
+            // deep cloning to break references
+            ...JSON.parse(JSON.stringify(oldShare)),
             BuyPrice: oldShare.BuyPrice / e.SplitTo,
             Notes: `Split ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]}, ${oldShare.Notes}`
         }
@@ -103,13 +115,11 @@ const processSplit = (e: Event, holdings: Record<string, Share[]>) => {
         }
     }
     holdings[e.Ticker] = [
-        ...sold,
-        ...newHolding
+        // deep cloning to break references
+        ...JSON.parse(JSON.stringify(sold)),
+        ...JSON.parse(JSON.stringify(newHolding))
     ];
-    console.log(sold, newHolding);
-
-    console.log(holdings[e.Ticker]);
     
-    console.log(`Splitting to ${e.Ticker} ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]} to ${holdings[e.Ticker].length} shares`);
+    // console.log(`Splitting to ${e.Ticker} ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]} to ${holdings[e.Ticker].length} shares`);
 }
 

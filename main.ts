@@ -29,7 +29,7 @@ const main = async () => {
         visualiseCSV(enhanced);
  
         const result = await organizeStockPurchases(enhanced);
-        // visualiseExpiration(result);
+        visualiseExpiration(result);
 
     } catch (error) {
         console.error('Error reading CSV:', error);

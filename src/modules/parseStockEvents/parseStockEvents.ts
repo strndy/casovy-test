@@ -1,5 +1,6 @@
 import { ExitStatus } from "typescript";
-import { Share, Event, Split } from "../../types";
+import { Share, Event, Split, StockError } from "../../types";
+import { mockStockEvents } from "./parseStockEvents.mock";
 
 const TIME_TEST_DAYS = 365 * 3;
 
@@ -25,7 +26,7 @@ export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: str
         try {
             processEvents(event, holdings, ignoreStocks);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             errors.push(error);
         }
     });
@@ -101,8 +102,9 @@ const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => 
 
 const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     if(!holdings[event.Ticker]) {
-        console.warn(event);
-        throw new Error(`No shares to sell for ${event.Ticker}`);
+        // console.warn(event);
+        console.table(holdings[event.Ticker]);
+        throw new StockError(`No shares to sell for ${event.Ticker}`, event.Ticker, event, holdings[event.Ticker]);
     }
     const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
     
@@ -129,7 +131,7 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
             if (remainingToSell < selling.Quantity) {
                 // Split the fractional share
                 const remainingShare = {
-                    ...JSON.parse(JSON.stringify(selling)),
+                    ...structuredClone(selling),
                     Quantity: selling.Quantity - remainingToSell,
                     Notes: `${selling.Notes} (remaining fraction)`
                 };
@@ -158,7 +160,7 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
         if (remainingToSell < selling.Quantity) {
             // Split the share into sold and remaining portions
             const remainingShare = {
-                ...JSON.parse(JSON.stringify(selling)),
+                ...structuredClone(selling),
                 Quantity: selling.Quantity - remainingToSell,
                 Notes: `${selling.Notes} (remaining fraction)`
             };
@@ -183,7 +185,11 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     }
 
     if (remainingToSell > 0) {
-        throw new Error(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`);
+        throw new StockError(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`,
+            event.Ticker,
+            event,
+            holdings[event.Ticker]
+        );
     }
 
     // Calculate final total shares and verify the difference matches what was sold
@@ -242,6 +248,13 @@ const processSplit = (e: Event, holdings: Record<string, Share[]>) => {
         ...JSON.parse(JSON.stringify(sold)),
         ...JSON.parse(JSON.stringify(newHolding))
     ];
+
+    holdings[e.Ticker].forEach(s => {
+        s.BuyDate = new Date(s.BuyDate);
+        if (s.SellDate) {
+            s.SellDate = new Date(s.SellDate);
+        }
+    });
     
     // console.log(`Splitting to ${e.Ticker} ${e.SplitTo}x on ${e.Time.toISOString().split('T')[0]} to ${holdings[e.Ticker].length} shares`);
 }

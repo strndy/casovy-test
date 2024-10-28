@@ -21,7 +21,7 @@ export const readCSV = async (filePath: string): Promise<Event[]> => {
                     return date;
                 }
                 if (context.column === 'NoOfShares') {
-                    return parseInt(value);
+                    return parseFloat(value);
                 }
                 if (context.column === 'PriceShare') {
                     return parseFloat(value);
@@ -31,6 +31,7 @@ export const readCSV = async (filePath: string): Promise<Event[]> => {
         }));
 
     for await (const record of parser) {
+        // console.log(record);
         records.push(record);
     }
 

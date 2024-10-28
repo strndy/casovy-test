@@ -46,3 +46,15 @@ export type Split = {
     split_to: number;
     ticker: string;
 }
+
+export class StockError extends Error {
+    constructor(
+        message: string,
+        public ticker: string,
+        public event: Event,
+        public holdings: Share[]
+    ) {
+        super(message);
+        this.name = 'StockError';
+    }
+}

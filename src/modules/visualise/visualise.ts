@@ -1,11 +1,11 @@
 import { Event, Share } from "../../types";
 
 function formatDate(date: Date): string {
-    return date.toLocaleDateString('cs-CZ', {
+    return date ? date.toLocaleDateString('cs-CZ', {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric'
-    });
+    }) : '';
 }
 
 export const visualiseExpiration = (holding: Record<string, Share[]>) => {
@@ -28,9 +28,10 @@ export const visualiseExpiration = (holding: Record<string, Share[]>) => {
             
                }
             } else {
+                console.log(share);
                 result.age = Math.round((new Date().getTime() - share.BuyDate.getTime()) / (1000 * 60 * 60 * 24));
                 if(result.age > 365 * 3) {
-                    result.passed3Years = true;
+                    result.passed3Years =remaining fraction true;
                 }
                 result.monthsTill3Years = Math.round((365 * 3 - result.age) / 30);
             }
@@ -46,7 +47,9 @@ export const visualiseCSV = (csv: Event[]) => {
         return {
             // ...row,
             Ticker: row.Ticker,
-            Time: formatDate(new Date(row.Time)),
+            NoOfShares: row.NoOfShares,
+            ID: row.ID,
+            Time: formatDate(row.Time),
             Action: row.Action,
             Notes: row.Notes,
             

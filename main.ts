@@ -11,19 +11,24 @@ import { enhanceCSVWithSplits } from './src/modules/enhnace/enhace';
 
 const main = async () => {
     try {
-        const csvPath1 = path.join(__dirname, './data/from_2019-12-04_to_2020-12-03_MTcyOTY2NzkzMDk4Ng.csv');
-        const csvData1 = await readCSV(csvPath1);
+        const csvFilenames = [
+            "from_2019-12-04_to_2020-12-03_MTczMDEwMTExNDIwMw.csv",
+            "from_2020-12-04_to_2021-12-03_MTczMDEwNDA1MTY5Mw.csv",
+            "from_2021-12-04_to_2022-12-03_MTcyOTY2ODA0OTkyOQ.csv",
+            "from_2022-12-04_to_2023-12-03_MTcyOTY2ODA3OTAyMg.csv",
+            "from_2023-12-04_to_2024-10-23_MTcyOTY2ODEyNTM2Mw.csv",
+        ];
 
-        const csvPath2 = path.join(__dirname, './data/from_2021-12-04_to_2022-12-03_MTcyOTY2ODA0OTkyOQ.csv');
-        const csvData2 = await readCSV(csvPath2);
+        let csvData = [];     
+        for (const csvFilename of csvFilenames) {
+            const csvPath = path.join(__dirname, `./data/${csvFilename}`);
+            const content = await readCSV(csvPath);
+            csvData.push(...content);
+        }
+        // "BA", "BM", "MA"
+        csvData = csvData.filter(e => e.Ticker == "TSLA");
+        // visualiseCSV(csvData);
 
-        const csvPath3 = path.join(__dirname, './data/from_2022-12-04_to_2023-12-03_MTcyOTY2ODA3OTAyMg.csv');
-        const csvData3 = await readCSV(csvPath3);
-
-        const csvPath4 = path.join(__dirname, './data/from_2023-12-04_to_2024-10-23_MTcyOTY2ODEyNTM2Mw.csv');
-        const csvData4 = await readCSV(csvPath4);
-
-        const csvData = [...csvData1, ...csvData2, ...csvData3, ...csvData4];
 
         //  list of all the unique stock tickets   
         const allTickers = csvData
@@ -38,13 +43,20 @@ const main = async () => {
 
         const enhanced = enhanceCSVWithSplits(csvData, splits);
         // visualiseCSV(enhanced);
-        console.table(enhanced.find(e => e.Ticker === 'MA'));
+        // console.table(enhanced.find(e => e.Ticker === 'MA'));
         // FIXME, thes stocks are not working well, debug it
-        const {holdings, errors} = await organizeStockPurchases(enhanced, ["ZM", "BA", "BM", "MA"]);
+        const {holdings, errors} = await organizeStockPurchases(enhanced, ["DM"]);
         visualiseExpiration(holdings);
         if (errors.length > 0) {
             console.error('Errors:', errors.length);
-            console.table(errors.map(e => e.message));
+            const errorsTable = errors.map(e => { 
+                const sum = e.holdings ? e.holdings.reduce((sum, h) => sum + h.Quantity, 0) : "N/A";
+                const notSold = e.holdings ? e.holdings.filter(h => !h.SellDate).reduce((sum, h) => sum + h.Quantity, 0) : "N/A";
+                const sold = e.holdings ? e.holdings.filter(h => h.SellDate).reduce((sum, h) => sum + h.Quantity, 0) : "N/A";
+                // const holdings = e.holdings ? e.holdings.map(h => `${h.Quantity} @ ${h.BuyPrice}`).join(", ") : "N/A";
+                return {ticker: e.ticker, message: e.message, event: e.event, holdings, sum, notSold, sold} 
+            });
+            console.table(errorsTable);
         }
 
     } catch (error) {

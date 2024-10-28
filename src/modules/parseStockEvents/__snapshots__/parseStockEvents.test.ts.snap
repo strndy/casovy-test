@@ -4,7 +4,7 @@ exports[`parseStockEvents should have all the stocks and marked sold shares 1`] 
 {
   "AAPL": [
     {
-      "BuyDate": "2023-01-01T10:00:00.000Z",
+      "BuyDate": 2023-01-01T10:00:00.000Z,
       "BuyEventId": "111111",
       "BuyPrice": 75,
       "Notes": "Split 2x on 2023-04-01, before split",
@@ -15,7 +15,7 @@ exports[`parseStockEvents should have all the stocks and marked sold shares 1`] 
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-01-01T10:00:00.000Z",
+      "BuyDate": 2023-01-01T10:00:00.000Z,
       "BuyEventId": "111111",
       "BuyPrice": 75,
       "Notes": "Split 2x on 2023-04-01, before split",
@@ -26,7 +26,7 @@ exports[`parseStockEvents should have all the stocks and marked sold shares 1`] 
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-02-01T10:00:00.000Z",
+      "BuyDate": 2023-02-01T10:00:00.000Z,
       "BuyEventId": "111112",
       "BuyPrice": 100,
       "Notes": "Split 2x on 2023-04-01, before split",
@@ -34,7 +34,7 @@ exports[`parseStockEvents should have all the stocks and marked sold shares 1`] 
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-02-01T10:00:00.000Z",
+      "BuyDate": 2023-02-01T10:00:00.000Z,
       "BuyEventId": "111112",
       "BuyPrice": 100,
       "Notes": "Split 2x on 2023-04-01, before split",
@@ -57,7 +57,7 @@ exports[`parseStockEventsFractional should handle fractional shares 1`] = `
 {
   "AAPL": [
     {
-      "BuyDate": "2023-01-01T10:00:00.000Z",
+      "BuyDate": 2023-01-01T10:00:00.000Z,
       "BuyEventId": "111111",
       "BuyPrice": 75,
       "Notes": "Split 2x on 2023-04-01, before split (fractional)",
@@ -68,7 +68,7 @@ exports[`parseStockEventsFractional should handle fractional shares 1`] = `
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-01-01T10:00:00.000Z",
+      "BuyDate": 2023-01-01T10:00:00.000Z,
       "BuyEventId": "111111",
       "BuyPrice": 75,
       "Notes": "Split 2x on 2023-04-01, before split (fractional)",
@@ -152,7 +152,7 @@ exports[`parseStockEventsFractional should handle fractional shares 2 1`] = `
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-05-01T14:30:00.000Z",
+      "BuyDate": 2023-05-01T14:30:00.000Z,
       "BuyEventId": "111115",
       "BuyPrice": 200,
       "Notes": "bought after split (fractional) (remaining fraction)",
@@ -219,7 +219,7 @@ exports[`parseStockEventsFractional should handle fractional shares 3 1`] = `
       "Ticker": "AAPL",
     },
     {
-      "BuyDate": "2023-01-01T10:00:00.000Z",
+      "BuyDate": 2023-01-01T10:00:00.000Z,
       "BuyEventId": "111112",
       "BuyPrice": 150,
       "Notes": "before split (remaining fraction)",

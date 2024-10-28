@@ -31,7 +31,7 @@ export const visualiseExpiration = (holding: Record<string, Share[]>) => {
                 console.log(share);
                 result.age = Math.round((new Date().getTime() - share.BuyDate.getTime()) / (1000 * 60 * 60 * 24));
                 if(result.age > 365 * 3) {
-                    result.passed3Years =remaining fraction true;
+                    result.passed3Years = true;
                 }
                 result.monthsTill3Years = Math.round((365 * 3 - result.age) / 30);
             }

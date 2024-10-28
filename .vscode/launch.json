@@ -4,13 +4,28 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug ts-node",
+            "runtimeExecutable": "node",
+            "runtimeArgs": [
+                "--loader",
+                "ts-node/esm",
+                "./main.ts"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug Jest Tests",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest",
             "args": [
                 "--runInBand",
                 "--watchAll=false",
                 "--testTimeout=10000",
-                // "${relativeFile}"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",

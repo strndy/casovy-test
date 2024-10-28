@@ -3,7 +3,6 @@ import path from 'path';
 
 import { Split } from '../../types';
 import { fetchSplits } from './polygonAPi';
-import { Console } from 'console';
 
 function l(message: string) {
     process.stdout.write(message + " ");
@@ -54,6 +53,6 @@ export const loadSplits = async (tickers: string[]) => {
             splits.push(singleStockSplits);
         }
     }
-    console.log(`Loaded all ${splits.length} splits`);
+    // console.log(`Loaded all ${splits.length} splits`);
     return splits;
 }

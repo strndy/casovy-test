@@ -29,18 +29,23 @@ const main = async () => {
         const allTickers = csvData
             .map(row => row.Ticker)
             .filter((value, index, self) => self.indexOf(value) === index)
-            .filter(ticker => ticker.length > 1);
+            .filter(ticker => ticker.length > 1).sort();
 
         console.log(allTickers, allTickers.length);
         // load splits from polygon
         const splits = await loadSplits(allTickers);
-        console.log(splits, splits.length);
+        // console.log(splits, splits.length);
 
         const enhanced = enhanceCSVWithSplits(csvData, splits);
-        visualiseCSV(enhanced);
- 
-        const result = await organizeStockPurchases(enhanced, ['DM']);
-        visualiseExpiration(result);
+        // visualiseCSV(enhanced);
+        console.table(enhanced.find(e => e.Ticker === 'MA'));
+        // FIXME, thes stocks are not working well, debug it
+        const {holdings, errors} = await organizeStockPurchases(enhanced, ["ZM", "BA", "BM", "MA"]);
+        visualiseExpiration(holdings);
+        if (errors.length > 0) {
+            console.error('Errors:', errors.length);
+            console.table(errors.map(e => e.message));
+        }
 
     } catch (error) {
         console.error('Error reading CSV:', error);

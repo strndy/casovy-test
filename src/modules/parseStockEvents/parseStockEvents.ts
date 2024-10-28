@@ -4,10 +4,11 @@ import { Share, Event, Split } from "../../types";
 const TIME_TEST_DAYS = 365 * 3;
 
 // Split the stock events into individual shares
-export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: string[] = []): Promise<Record<string, Share[]>> => {
+export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: string[] = []): Promise<{holdings: Record<string, Share[]>, errors}> => {
     const holdings: Record<string, Share[]> = {};
     // verify order of events
     let prevEvent: Event | null = null;
+    const errors: string[] = [];
 
     // verify there are no duplicate events by ID
     verifyNoDuplicateEvents(csvData);
@@ -21,26 +22,33 @@ export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: str
             throw new Error('Events are not in order');
         }
         prevEvent = event;
-        // create collection of individual shares
-        if (event.Action.endsWith('buy')) {
-            addShareToHoldings(event, holdings);
+        try {
+            processEvents(event, holdings, ignoreStocks);
+        } catch (error) {
+            console.error(error);
+            errors.push(error);
         }
-
-        // process splits
-        if (event.Action.startsWith('Split')) {
-            processSplit(event, holdings);
-        }
-
-        // we are selling the oldest shares by czech law
-        if (event.Action.endsWith('sell')) {
-            markSold(holdings, event);
-        }
-
     });
 
+    return {holdings, errors};
+}
 
+const processEvents = (event: Event, holdings: Record<string, Share[]>, ignoreStocks: string[]) => {
 
-    return holdings;
+    // create collection of individual shares
+    if (event.Action.endsWith('buy')) {
+        addShareToHoldings(event, holdings);
+    }
+
+    // process splits
+    if (event.Action.startsWith('Split')) {
+        processSplit(event, holdings);
+    }
+
+    // we are selling the oldest shares by czech law
+    if (event.Action.endsWith('sell')) {
+        markSold(holdings, event);
+    }
 }
 
 const verifyNoDuplicateEvents = (events: Event[]) => {
@@ -93,6 +101,7 @@ const addShareToHoldings = (event: Event, holdings: Record<string, Share[]>) => 
 
 const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     if(!holdings[event.Ticker]) {
+        console.warn(event);
         throw new Error(`No shares to sell for ${event.Ticker}`);
     }
     const notSold = holdings[event.Ticker].filter(s => !s.SellDate);
@@ -187,14 +196,11 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     const checksumNotSold = initialNotSold - finalNotSold - event.NoOfShares;
     const checksumSold = initialSold - finalSold + event.NoOfShares;
 
-    console.log({selling: event.NoOfShares, initialTotal, finalTotal, checksumRegardlesOfState, initialNotSold, finalNotSold, checksumNotSold, initialSold, finalSold, checksumSold});
+    // console.log({selling: event.NoOfShares, initialTotal, finalTotal, checksumRegardlesOfState, initialNotSold, finalNotSold, checksumNotSold, initialSold, finalSold, checksumSold});
     
     if (Math.abs(checksumRegardlesOfState) > 0.01 || Math.abs(checksumNotSold) > 0.01 || Math.abs(checksumSold) > 0.01) { // Using small epsilon for floating point comparison
         console.table(holdings[event.Ticker]);
-        
         console.warn({selling: event.NoOfShares, initialTotal, finalTotal, checksumRegardlesOfState, initialNotSold, finalNotSold, checksumNotSold, initialSold, finalSold, checksumSold});
-   
-        // console.warn(`Mismatch! initial: ${initialTotal}, final: ${finalTotal}, checksumRegardlesOfState: ${checksumRegardlesOfState}`);
         throw new Error(`Checkum failed after sale!`);
     }
 }

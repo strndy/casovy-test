@@ -10,7 +10,6 @@ import { enhanceCSVWithSplits } from './src/modules/enhnace/enhace';
 
 
 const main = async () => {
-    try {
         const csvFilenames = [
             "from_2019-12-04_to_2020-12-03_MTczMDEwMTExNDIwMw.csv",
             "from_2020-12-04_to_2021-12-03_MTczMDEwNDA1MTY5Mw.csv",
@@ -46,7 +45,8 @@ const main = async () => {
         // console.table(enhanced.find(e => e.Ticker === 'MA'));
         // FIXME, thes stocks are not working well, debug it
         const {holdings, errors} = await organizeStockPurchases(enhanced, ["DM"]);
-        visualiseExpiration(holdings);
+        // visualiseExpiration(holdings);
+
         if (errors.length > 0) {
             console.error('Errors:', errors.length);
             const errorsTable = errors.map(e => { 
@@ -54,14 +54,11 @@ const main = async () => {
                 const notSold = e.holdings ? e.holdings.filter(h => !h.SellDate).reduce((sum, h) => sum + h.Quantity, 0) : "N/A";
                 const sold = e.holdings ? e.holdings.filter(h => h.SellDate).reduce((sum, h) => sum + h.Quantity, 0) : "N/A";
                 // const holdings = e.holdings ? e.holdings.map(h => `${h.Quantity} @ ${h.BuyPrice}`).join(", ") : "N/A";
-                return {ticker: e.ticker, message: e.message, event: e.event, holdings, sum, notSold, sold} 
+                return {ticker: e.ticker, message: e.message, count: holdings.length, sum, notSold, sold} 
             });
             console.table(errorsTable);
         }
 
-    } catch (error) {
-        console.error('Error reading CSV:', error);
-    }
 }
 
-main();
+main().then(console.log).catch(console.error);

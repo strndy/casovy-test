@@ -1,6 +1,7 @@
 import { ExitStatus } from "typescript";
 import { Share, Event, Split, StockError } from "../../types";
 import { mockStockEvents } from "./parseStockEvents.mock";
+import { visualiseShare } from "../visualise/visualise";
 
 const TIME_TEST_DAYS = 365 * 3;
 
@@ -27,6 +28,7 @@ export const organizeStockPurchases = async (csvData: Event[], ignoreStocks: str
             processEvents(event, holdings, ignoreStocks);
         } catch (error) {
             // console.error(error);
+            throw new Error(error.message);
             errors.push(error);
         }
     });
@@ -185,6 +187,9 @@ const markSold = (holdings: Record<string, Share[]>, event: Event) => {
     }
 
     if (remainingToSell > 0) {
+        console.table(event);
+        visualiseShare(holdings[event.Ticker]);
+        // console.table(holdings[event.Ticker].map(s => ({...s, Quantity: Math.floor(s.Quantity * 100) / 100, BuyPrice: Math.floor(s.BuyPrice * 100) / 100})));
         throw new StockError(`Could not sell all requested shares for ${event.Ticker}. Remaining: ${remainingToSell}`,
             event.Ticker,
             event,
